@@ -77,6 +77,7 @@ enum {
 #define U_PSTE  C(KC_V)
 
 #define U_LNG   G(KC_SPC)
+#define U_CMD   C(S(KC_P))
 #define U_STAB  S(KC_TAB)
 
 #define U_MMUTE KC_F20 // mic mute
@@ -91,9 +92,9 @@ enum {
 
 
 #define LAYER_NAV \
-    _______ , U_STAB  , KC_TAB  , KC_ENT  , SW_APP  , SW_SCRT ,           KC_WBAK , KC_WFWD , KC_PGUP , KC_PGDN , KC_APP  , XXXXXXX ,  \
+    _______ , U_STAB  , KC_TAB  , KC_ENT  , SW_APP  , SW_SCRT ,           KC_WBAK , KC_WFWD , KC_HOME , KC_END  , KC_APP  , XXXXXXX ,  \
     _______ , OS_LALT , OS_LSFT , OS_LCTL , OS_LGUI , SW_WIN  ,           KC_LEFT , KC_DOWN , KC_UP   , KC_RGHT , KC_BSPC , XXXXXXX ,  \
-    _______ , U_UNDO  , U_CUT   , U_COPY  , U_PSTE  , SW_WRK  ,           U_LNG   , KC_DEL  , KC_HOME , KC_END  , KC_INS  , XXXXXXX ,  \
+    _______ , U_UNDO  , U_CUT   , U_COPY  , U_PSTE  , SW_WRK  ,           U_LNG   , KC_DEL  , KC_PGUP , KC_PGDN , KC_INS  , XXXXXXX ,  \
                                     _______ , _______ , _______ ,       _______ , _______ , _______
 
 #define LAYER_NUM \
@@ -103,15 +104,15 @@ enum {
                                     _______ , _______ , _______ ,       _______ , _______ , _______
 
 #define LAYER_FUN \
-    _______ , KC_F12  , KC_F7   , KC_F8   , KC_F9   , XXXXXXX ,           XXXXXXX , A_SHFT  , KC_PAUS , KC_SCRL , XXXXXXX , T_BOOT  ,  \
+    _______ , KC_F12  , KC_F7   , KC_F8   , KC_F9   , XXXXXXX ,           XXXXXXX , A_SHFT  , KC_PAUS , KC_SCRL , KC_INS  , T_BOOT  ,  \
     _______ , KC_F11  , KC_F4   , KC_F5   , KC_F6   , XXXXXXX ,           KC_CAPS , OS_LGUI , OS_LCTL , OS_LSFT , OS_LALT , T_EECLR ,  \
     _______ , KC_F10  , KC_F1   , KC_F2   , KC_F3   , XXXXXXX ,           NK_TOGG , A_ALGR  , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX ,  \
                                     _______ , _______ , _______ ,       _______ , _______ , _______
 
 #define LAYER_LFT \
-    _______ , XXXXXXX , KC_PGUP , KC_UP   , KC_PGDN , XXXXXXX ,           KC_VOLD , KC_VOLU , KC_MUTE , U_MMUTE , KC_PSCR , T_TOOL  ,  \
-    _______ , KC_BSPC , KC_LEFT , KC_DOWN , KC_RGHT , TG_LFT  ,           KC_BRID , KC_BRIU , KC_MSTP , KC_MPLY , KC_MPRV , KC_MNXT ,  \
-    _______ , XXXXXXX , KC_HOME , KC_END  , KC_DEL  , XXXXXXX ,           XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX ,  \
+    _______ , XXXXXXX , KC_PGUP , KC_UP   , KC_PGDN , TG_LFT  ,           KC_VOLD , KC_VOLU , KC_MUTE , U_MMUTE , KC_PSCR , T_TOOL  ,  \
+    _______ , KC_BSPC , KC_LEFT , KC_DOWN , KC_RGHT , KC_DEL  ,           KC_BRID , KC_BRIU , KC_MSTP , KC_MPLY , KC_MPRV , KC_MNXT ,  \
+    _______ , XXXXXXX , KC_HOME , XXXXXXX , KC_END  , XXXXXXX ,           XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX ,  \
                                     _______ , _______ , _______ ,       _______ , _______ , _______
 
 #define LAYER_LFTB \

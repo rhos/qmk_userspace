@@ -117,11 +117,11 @@ BASE_TEMPLATE
 #define LAYER_NAV \
                                                                  R0_FN                                                                 \
 /*├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤         ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤*/\
-    XXXXXXX , U_STAB  , KC_TAB  , KC_ENT  , SW_APP  , SW_SCRT ,           KC_WBAK , KC_WFWD , KC_DEL  , U_LNG   , U_CMD   , XXXXXXX ,  \
+    XXXXXXX , U_STAB  , KC_TAB  , KC_ENT  , SW_APP  , SW_SCRT ,           KC_WBAK , KC_WFWD , KC_HOME , KC_END  , KC_APP  , XXXXXXX ,  \
 /*├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤         ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤*/\
     XXXXXXX , OS_LALT , OS_LSFT , OS_LCTL , OS_LGUI , SW_WIN  ,           KC_LEFT , KC_DOWN , KC_UP   , KC_RGHT , KC_BSPC , XXXXXXX ,  \
 /*├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤         ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤*/\
-    XXXXXXX , U_UNDO  , U_CUT   , U_COPY  , U_PSTE  , SW_WRK  ,           KC_HOME , KC_PGDN , KC_PGUP , KC_END  , KC_APP  , XXXXXXX ,  \
+    XXXXXXX , U_UNDO  , U_CUT   , U_COPY  , U_PSTE  , SW_WRK  ,           U_LNG   , KC_DEL  , KC_PGUP , KC_PGDN , KC_INS  , XXXXXXX ,  \
 /*└─────────┴─────────┴─────────┴─┬───────┴─┬───────┴─┬───────┴─┐     ┌─┴───────┬─┴───────┬─┴─────────┴─────────┴─────────┴─────────┘*/\
                                     _______ , _______ , _______ ,       _______ , _______ ,                                            \
 /*                                └─────────┼─────────┼─────────┤     ├─────────┼─────────┘                                          */\
@@ -161,11 +161,11 @@ BASE_TEMPLATE
 /*┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐         ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐*/\
     XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX ,           RGB_TOG , RGB_MOD , RGB_HUI , RGB_SAI , RGB_VAI , U_RGB_B ,  \
 /*├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤         ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤*/\
-    XXXXXXX , XXXXXXX , XXXXXXX , KC_UP   , KC_DEL  , XXXXXXX ,           XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX ,  \
+    XXXXXXX , XXXXXXX , KC_PGUP , KC_UP   , KC_PGDN , TG_LFT  ,           XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX ,  \
 /*├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤         ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤*/\
-    XXXXXXX , KC_BSPC , KC_LEFT , KC_DOWN , KC_RGHT , TG_LFT  ,           XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , DPI_MOD ,  \
+    XXXXXXX , KC_BSPC , KC_LEFT , KC_DOWN , KC_RGHT , KC_DEL  ,           XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , DPI_MOD ,  \
 /*├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤         ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤*/\
-    XXXXXXX , XXXXXXX , KC_HOME , KC_PGUP , KC_PGDN , KC_END  ,           XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , S_D_MOD ,  \
+    XXXXXXX , XXXXXXX , KC_HOME , XXXXXXX , KC_END  , XXXXXXX ,           XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , XXXXXXX , S_D_MOD ,  \
 /*└─────────┴─────────┴─────────┴─┬───────┴─┬───────┴─┬───────┴─┐     ┌─┴───────┬─┴───────┬─┴─────────┴─────────┴─────────┴─────────┘*/\
                                     _______ , _______ , _______ ,       _______ , _______ ,                                            \
 /*                                └─────────┼─────────┼─────────┤     ├─────────┼─────────┘                                          */\
