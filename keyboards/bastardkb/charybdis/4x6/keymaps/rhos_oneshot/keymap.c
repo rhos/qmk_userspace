@@ -170,6 +170,7 @@ OSLAYER_LIST
 // clang-format on
 
 #pragma region POINTING
+oneshot_key_t os_DRG_key = {os_up_unqueued, 0};
 
 void start_pointing(void) {
     if (auto_pointer_layer_timer == 0) layer_on(U_PNT);
@@ -179,9 +180,22 @@ void start_pointing(void) {
 void stop_pointing(void) {
     layer_off(U_PNT);
     auto_pointer_layer_timer = 0;
+
+    if (os_DRG_key.oneshot_state == os_up_queued || os_DRG_key.oneshot_state == os_up_queued_used) {
+        charybdis_set_pointer_dragscroll_enabled(false);
+        os_DRG_key.oneshot_state = os_up_unqueued;
+    }
 }
 
-bool is_pointing_key(uint16_t keycode) {
+bool is_drg_cancel_key(uint16_t keycode) {
+    return true;
+}
+
+bool is_drg_ignored_key(uint16_t keycode) {
+    return false;
+}
+
+bool is_drg_stop_processing_key(uint16_t keycode) {
     switch (keycode) {
         case KC_BTN1:
         case KC_BTN2:
@@ -190,6 +204,7 @@ bool is_pointing_key(uint16_t keycode) {
         case KC_BTN5:
         case SNIPING:
         case U_CBTN1:
+        case U_CDRG:
             return true;
         default:
             return false;
@@ -200,15 +215,15 @@ void process_pointing(uint16_t keycode, keyrecord_t *record, bool *continue_proc
     bool should_cancel = record->event.pressed;
 
     if (record->event.pressed) {
-        if (charybdis_get_pointer_sniping_enabled()) {
+        if (os_DRG_key.oneshot_state == os_down_used || os_DRG_key.oneshot_state == os_down_unused) {
             switch (keycode) {
-                case U_BTN4:
-                    tap_code(KC_BTN4);
+                case KC_BTN1:
+                    tap_code(KC_BTN5);
                     *continue_processing = false;
                     should_cancel = false;
                     break;
-                case U_BTN5:
-                    tap_code(KC_BTN5);
+                case SNIPING:
+                    tap_code(KC_BTN4);
                     *continue_processing = false;
                     should_cancel = false;
                     break;
@@ -229,16 +244,47 @@ void process_pointing(uint16_t keycode, keyrecord_t *record, bool *continue_proc
             }
             *continue_processing = false;
             break;
+        case U_CDRG:
+            if (record->event.pressed) {
+                register_mods(MOD_BIT(KC_LCTL));
+                charybdis_set_pointer_dragscroll_enabled(true);
+            } else {
+                charybdis_set_pointer_dragscroll_enabled(false);
+                unregister_mods(MOD_BIT(KC_LCTL));
+            }
+            *continue_processing = false;
+            break;
+    }
+
+    // update oneshot drgscrl
+    moddish_t drg_result = update_oneshot_impl(&os_DRG_key, OS_DRG, keycode, record->event.pressed, is_drg_cancel_key, is_drg_ignored_key);
+
+    // sets drg state and cancels key processing if we are exiting oneshot drg.
+    switch (drg_result) {
+        case MODDISH_PRESSED: {
+            charybdis_set_pointer_dragscroll_enabled(true);
+            break;
+        }
+        case MODDISH_RELEASED:
+            charybdis_set_pointer_dragscroll_enabled(false);
+            *continue_processing &= !is_drg_stop_processing_key(keycode);
+            break;
+        default:
+            break;
     }
 
     // should_cancel = should_cancel || os_DRG_key.oneshot_state == os_up_unqueued;
-    if (should_cancel && layer_state_is(U_PNT) && !is_pointing_key(keycode)) {
+    if (should_cancel && layer_state_is(U_PNT) && !is_drg_stop_processing_key(keycode) && keycode != OS_DRG) {
         stop_pointing();
         *layer_updated = true;
     }
 
-    // if (layer_state_is(U_PNT))
-    //     auto_pointer_layer_timer = timer_read();
+    if (layer_state_is(U_PNT))
+        auto_pointer_layer_timer = timer_read();
+    else if (os_DRG_key.oneshot_state == os_up_queued || os_DRG_key.oneshot_state == os_up_queued_used) {
+        start_pointing();
+        *layer_updated = true;
+    }
 }
 
 #pragma endregion
@@ -595,7 +641,7 @@ void matrix_scan_user(void) {
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
     if (CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS > 0 && auto_pointer_layer_timer != 0 && TIMER_DIFF_16(timer_read(), auto_pointer_layer_timer) >= CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS) {
-        if (!charybdis_get_pointer_sniping_enabled()) stop_pointing();
+        if (os_DRG_key.oneshot_state == os_up_unqueued && !charybdis_get_pointer_sniping_enabled()) stop_pointing();
     }
 #    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #endif     // POINTING_DEVICE_ENABLE
@@ -611,6 +657,14 @@ void matrix_scan_user(void) {
     OSLAYER_LIST
     #undef OSLAYER_X
     // clang-format on
+
+    if (os_DRG_key.oneshot_state == os_down_unused) {
+        uint16_t elapsed = timer_elapsed(os_DRG_key.down_unused_time);
+        if (elapsed >= 300) {
+            os_DRG_key.oneshot_state    = os_down_used;
+            os_DRG_key.down_unused_time = 0;
+        }
+    }
 }
 
 #ifdef POINTING_DEVICE_ENABLE
@@ -628,7 +682,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         if(layer_state_is(U_NAV))
         {
             charybdis_set_pointer_dragscroll_enabled(true);
-            // simulate keypress
             update_oneshot_layer(&os_NAV_key, U_NAV, OSL_NAV, KC_NO, true);
             update_oneshot_layer(&os_NAV_key, U_NAV, OSL_NAV, KC_NO, false);
         }
@@ -638,6 +691,9 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         }
     }
 
+    if ((mouse_report.h != 0 || mouse_report.v != 0) && os_DRG_key.oneshot_state == os_down_unused) {
+        os_DRG_key.oneshot_state = os_down_used;
+    }
     /*
     if (charybdis_get_pointer_sniping_enabled())
         return mouse_report;
@@ -732,15 +788,14 @@ void rgb_matrix_show_dpi(void) {
 
 void rgb_matrix_show_point(void) {
     const uint8_t top_leds[6] = {49, 45, 44, 37, 36, 29};
-    if (layer_state_is(U_PNT))
-    {
+
+    if (os_DRG_key.oneshot_state == os_up_queued) {
+        for (uint8_t i = 0; i < 6; ++i)
+            set_slot_color(top_leds[i], COLOR_DRG);
+    } else {
         for (uint8_t i = 0; i < 6; ++i)
             set_slot_color(top_leds[i], COLOR_PNT);
     }
-    // if (os_DRG_key.oneshot_state == os_up_queued) {
-    //     for (uint8_t i = 0; i < 6; ++i)
-    //         set_slot_color(top_leds[i], COLOR_DRG);
-    // }
 }
 
 bool rgb_matrix_indicators_user(void) {
@@ -756,7 +811,7 @@ bool rgb_matrix_indicators_user(void) {
 
     if (user_config.a_algr_active) set_slot_color(48, COLOR_AA);
 
-    rgb_matrix_show_point();
+    if (layer_state_is(U_PNT)) rgb_matrix_show_point();
 
     // if (get_highest_layer(default_layer_state) == U_LFTB)
     if (layer_state_is(U_LFTB)) rgb_matrix_show_dpi();
