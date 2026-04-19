@@ -526,6 +526,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         unregister_swapper(&sw_##SWNAME##_active, SWMOD, SWKEY, SW_##SWNAME);
         SW_LIST
         #undef SW_X
+
+        charybdis_set_pointer_dragscroll_enabled(false);
     }
     // clang-format on
 
@@ -677,7 +679,16 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (x >= CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD || y >= CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD) {
         x = 0;
         y = 0;
-        start_pointing();
+        if(layer_state_is(U_NAV))
+        {
+            charybdis_set_pointer_dragscroll_enabled(true);
+            update_oneshot_layer(&os_NAV_key, U_NAV, OSL_NAV, KC_NO, true);
+            update_oneshot_layer(&os_NAV_key, U_NAV, OSL_NAV, KC_NO, false);
+        }
+        else
+        {
+            start_pointing();
+        }
     }
 
     if ((mouse_report.h != 0 || mouse_report.v != 0) && os_DRG_key.oneshot_state == os_down_unused) {
