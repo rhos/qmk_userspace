@@ -74,8 +74,8 @@ enum {
 
 #define U_UNDO  C(KC_Z)
 #define U_CUT   C(KC_X)
-#define U_COPY  C(KC_C)
-#define U_PSTE  C(KC_V)
+#define U_COPY  LCTL(KC_INS) // C(KC_C)
+#define U_PSTE  LSFT(KC_INS) // C(KC_V)
 
 #define U_LNG   G(KC_SPC)
 #define U_CMD   C(S(KC_P))
